@@ -1,0 +1,41 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.*;
+import java.util.List;
+
+public class VerifyMenuItems {
+    public static void main(String[] args) {
+              
+        WebDriver driver = new ChromeDriver();
+
+        driver.get("https://www.airnavradar.com/@17.38410,78.45640,z6");
+        
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        
+        
+        List<WebElement> mainMenuItems = driver.findElements(By.xpath("//nav//a"));
+        Actions actions = new Actions(driver);
+        for (WebElement menuItem : mainMenuItems) {
+            String menuText = menuItem.getText();
+            System.out.println("Main Menu: " + menuText);
+
+            actions.moveToElement(menuItem).perform();
+            
+            wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//a[contains(text(),'" + menuText + "')]/following-sibling::ul//a")));
+
+            // Find all sub-menu items 
+            List<WebElement> subMenuItems = driver.findElements(By.xpath("//a[contains(text(),'" + menuText + "')]/following-sibling::ul//a"));
+
+            // Iterate through each sub-menu item 
+            for (WebElement subMenuItem : subMenuItems) {
+                String subMenuText = subMenuItem.getText();
+                String subMenuLink = subMenuItem.getAttribute("href");
+                System.out.println("  Sub-Menu: " + subMenuText + " - Link: " + subMenuLink);
+
+            }
+        }
+        
+        driver.quit();
+    }
+}
