@@ -1,0 +1,40 @@
+import org.openqa.selenium.*;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.*;
+
+
+public class VerifyContactUsLink {
+    public static void main(String[] args) {
+        
+        WebDriver driver = new ChromeDriver();
+        
+        driver.get("https://www.airnavradar.com/@17.38410,78.45640,z6");
+       
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
+        
+        Actions actions = new Actions(driver);
+       
+        WebElement aboutMenu = driver.findElement(By.xpath("//a[contains(text(), 'About')]"));
+        actions.moveToElement(aboutMenu).perform();
+       
+        wait.until(ExpectedConditions.visibilityOfElementLocated(By.linkText("Contact Us")));
+       
+        WebElement contactUsLink = driver.findElement(By.linkText("Contact Us"));
+               
+        String contactUsUrl = contactUsLink.getAttribute("href");
+     
+        contactUsLink.click();
+       
+        wait.until(ExpectedConditions.urlContains("contact")); 
+        String currentUrl = driver.getCurrentUrl();
+
+        if (currentUrl.contains("contact")) {
+            System.out.println("The 'Contact Us' page is working.");
+        } else {
+            System.out.println("The 'Contact Us' link is not working.");
+        }
+       
+        driver.quit();
+    }
+}
